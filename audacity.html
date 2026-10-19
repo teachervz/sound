@@ -100,6 +100,30 @@ input,select{font-family:inherit}
 .wave{flex:1;display:block;height:9.5rem;cursor:text;touch-action:none;min-width:0;background:var(--trackbg)}
 .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;color:var(--muted);font-weight:800;font-size:1.2rem;direction:rtl;text-align:center;pointer-events:none}
 .empty b{font-size:3.5rem}
+/* ---------- بطاقة نص التسجيل (رسالة لوطني) ---------- */
+.prompter{position:absolute;top:2.8rem;left:0;right:0;margin:0 auto;width:min(56rem,95%);max-height:calc(100% - 4.2rem);overflow-y:auto;z-index:15;direction:rtl;
+  background:linear-gradient(165deg,#ffffff,#f4fbf6);border:3px solid #9fd8b4;border-radius:1.3rem;box-shadow:0 26px 60px -24px rgba(0,60,30,.45);padding:1rem 1.5rem 1.2rem;animation:pop .3s cubic-bezier(.2,1.3,.4,1)}
+.prompter.rec{border-color:var(--rec);box-shadow:0 0 0 .4rem rgba(224,54,79,.15),0 26px 60px -24px rgba(0,0,0,.4)}
+.pr-head{display:flex;align-items:center;gap:.5rem}
+.pr-head h3{flex:1;font-size:1.35rem;font-weight:900;color:#006c35}
+.pr-head button{width:2.3rem;height:2.3rem;border-radius:.6rem;background:#eef7f1;font-weight:900;font-size:1.05rem;color:#0b5a30}
+.pr-head button:hover{background:#d7efe0}
+.pr-article{margin-top:.7rem;background:#006c35;color:#fff;border-radius:1rem;padding:.7rem 1.1rem;line-height:1.9}
+.pr-article small{display:block;font-size:.85rem;font-weight:800;opacity:.85}
+.pr-article q{font-size:calc(var(--pf) * .82);font-weight:800;quotes:"«" "»"}
+.pr-body{margin-top:.8rem;display:flex;flex-direction:column;gap:.35rem}
+.pr-body p{font-size:var(--pf);font-weight:800;line-height:1.95;color:var(--ink);padding:.1rem .6rem;border-radius:.6rem;border-right:5px solid transparent;transition:background .3s,border-color .3s}
+.pr-body p.hl{background:#fff7d6;border-right-color:var(--amber)}
+.pr-dua{margin-top:.6rem;background:#fff7e0;border-radius:1rem;padding:.7rem 1.1rem;font-size:calc(var(--pf) * .92);font-weight:800;line-height:1.95;color:#5b3d00}
+.pr-dua b{display:block;font-size:.95rem;color:#a06400}
+.pr-foot{margin-top:.9rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;position:sticky;bottom:-1.2rem;background:linear-gradient(transparent,#f4fbf6 25%);padding:1rem 0 .4rem}
+.pr-foot .btn{font-size:1.05rem;padding:.65rem 1.5rem}
+.pr-foot .btn.rec{background:var(--rec)}
+.pr-foot .btn.green{background:#006c35}
+.pr-state{font-weight:900;font-size:1.05rem;color:var(--rec)}
+.pr-note{font-size:.85rem;font-weight:700;color:var(--muted);flex-basis:100%}
+.tb-script{padding:.55rem 1rem;border-radius:.7rem;background:#006c35;color:#fff;font-weight:800;font-size:.95rem;direction:rtl}
+.tb-script:hover{background:#00562a}
 .drop-hint{position:absolute;inset:.6rem;border:4px dashed var(--accent-2);border-radius:1rem;background:rgba(139,92,246,.12);display:grid;place-items:center;font-size:1.6rem;font-weight:900;color:var(--accent);z-index:20;direction:rtl}
 .hscroll{display:flex;align-items:center;gap:.5rem;padding:.25rem .6rem;background:var(--bar);border-top:1px solid var(--line)}
 .hscroll span{font-size:.75rem;font-weight:800;color:var(--muted);width:calc(var(--hw) - 1.2rem)}
@@ -229,6 +253,7 @@ input,select{font-family:inherit}
     <button data-a="zoomfit">Fit to Width <span class="ar">ملاءمة العرض</span><kbd>Ctrl+F</kbd></button>
     <hr>
     <button data-a="guide">Tasks Panel <span class="ar">لوحة المهام</span><kbd>📘</kbd></button>
+    <button data-a="script">Recording Script <span class="ar">نص التسجيل: رسالة لوطني</span><kbd>📜</kbd></button>
   </div></div>
   <div class="menu"><button>Help <small>مساعدة</small></button><div class="dropdown">
     <button data-a="help">Keyboard Shortcuts <span class="ar">اختصارات لوحة المفاتيح</span><kbd>?</kbd></button>
@@ -264,6 +289,7 @@ input,select{font-family:inherit}
   </div>
   <div class="tgroup meter" title="مقياس التشغيل Playback meter"><span>🔊</span><canvas id="meter" width="220" height="32"></canvas></div>
   <span class="tsep"></span>
+  <button class="tb-script" data-a="script">📜 رسالة لوطني</button>
   <button class="guide-toggle" data-a="guide">📘 المهام</button>
 </div>
 
@@ -274,6 +300,7 @@ input,select{font-family:inherit}
     <div class="tracks" id="tracks"></div>
     <div class="empty" id="empty"><b>🎧</b>افتحي ملفاً صوتياً من <span class="ltr">File › Open</span><br>أو اسحبي ملفاً صوتياً وأفلتيه هنا</div>
     <div class="hscroll"><span>↔ Scroll</span><input type="range" id="hscroll" min="0" max="1000" value="0"></div>
+    <div class="prompter hidden" id="prompter" style="--pf:1.45rem"></div>
     <div class="drop-hint hidden" id="dropHint">📥 أفلتي الملف هنا لإضافته كمسار جديد</div>
   </div>
 
@@ -304,7 +331,7 @@ input,select{font-family:inherit}
     <div class="opts">
       <button class="opt main-opt" data-a="anthem" id="anthemOpt"><span>🇸🇦</span>افتحي النشيد الوطني</button>
       <button class="opt" data-a="open"><span>📂</span>افتحي ملفاً من جهازكِ</button>
-      <button class="opt" data-a="record"><span>🎙️</span>سجّلي صوتكِ</button>
+      <button class="opt" data-a="script"><span>🎙️</span>سجّلي رسالة لوطني</button>
       <button class="opt" data-a="blank"><span>📄</span>مشروع فارغ</button>
     </div>
     <small>يمكنكِ أيضاً سحب ملف صوتي (mp3 / m4a / wav) وإفلاته في البرنامج</small>
@@ -321,6 +348,26 @@ input,select{font-family:inherit}
 /* #####################################################################
    ⚙️ إعدادات قابلة للتعديل: قائمة المهام التي تظهر في لوحة «مهامّكِ»
    ##################################################################### */
+/* نص التسجيل الذي تقرؤه الطالبة (عدّلي النصوص من هنا) */
+const RECORD_SCRIPT = {
+  title: '🇸🇦 رسالتي لوطني — اقرئي النص بصوت واضح',
+  article: {
+    label: '📜 المادة الرابعة والثلاثون من النظام الأساسي للحكم',
+    text: 'الدفاع عن العقيدة الإسلامية والمجتمع والوطن واجب على كل مواطن، ويبين النظام أحكام الخدمة العسكرية.'
+  },
+  lines: [
+    'وطني الغالي… أنا ابنتكَ، وأعرف أن الدفاع عنكَ واجبٌ عليّ.',
+    'سأقف أدافع عنكَ يا وطني بكلّ ما أستطيع.',
+    'ولن أصدّق ما يُنشر من إشاعاتٍ تهدف إلى نشر الخوف، وسأستقي أخباري من المصادر الرسمية.',
+    'أحبّكَ يا وطني ❤️'
+  ],
+  dua: {
+    label: '🤲 دعاء لجنودنا البواسل',
+    text: 'اللهم احفظ جنودنا المرابطين على حدود وطننا، وانصرهم، وثبّت أقدامهم، وسدّد رميهم، وردّهم إلى أهلهم سالمين غانمين، واحفظ بلادنا وقيادتنا من كل سوء. آمين.'
+  },
+  trackName: 'رسالتي لوطني 🎙️'
+};
+
 const TASKS = [
   { id: 'open',     title: 'افتحي ملفاً صوتياً',         hint: 'File › Open، أو اسحبي الملف إلى نافذة البرنامج' },
   { id: 'play',     title: 'شغّلي المقطع الصوتي',          hint: 'زر التشغيل ▶ أو مفتاح المسافة Space' },
@@ -334,7 +381,8 @@ const TASKS = [
   { id: 'save',     title: 'احفظي المشروع',                hint: 'File › Save Project As ثم اختاري مجلد Music' },
   { id: 'export',   title: 'صدّري الملف الصوتي',           hint: 'File › Export ليُحفظ ملف صوتي يعمل في أي مشغّل', bonus: true },
   { id: 'record',   title: 'سجّلي صوتكِ',                   hint: 'زر التسجيل ⏺ ثم زر التوقف ⏹', bonus: true },
-  { id: 'effect2',  title: 'جرّبي تأثيراً آخر',             hint: 'الصدى Echo أو العكس Reverse أو التضخيم Amplify', bonus: true }
+  { id: 'effect2',  title: 'جرّبي تأثيراً آخر',             hint: 'الصدى Echo أو العكس Reverse أو التضخيم Amplify', bonus: true },
+  { id: 'vmsg',     title: 'رسالة لوطني بخلفية النشيد',     hint: 'سجّلي «رسالة لوطني» ثم افتحي النشيد كمسار ثانٍ واخفضي Gain النشيد', bonus: true }
 ];
 
 /* #####################################################################
@@ -617,7 +665,7 @@ function bindTrack(row) {
   $('[data-gain]', row).oninput = e => {
     const t = trackById(id); t.gain = +e.target.value; e.target.nextElementSibling.textContent = (t.gain > 0 ? '+' : '') + t.gain + ' dB';
     if (play && t._g) t._g.gain.value = dbToLin(t.gain);
-    mark('gain');
+    mark('gain'); checkVmsg();
   };
   $('[data-tsel]', row).onclick = () => { focusId = id; sel = { a: 0, b: trackById(id).data.length / SR(), ids: new Set([id]) }; render(); };
   $('.th', row).addEventListener('pointerdown', e => { if (e.target === e.currentTarget) { focusId = id; sel = { a: 0, b: duration(), ids: new Set([id]) }; render(); } });
@@ -704,22 +752,25 @@ async function startRec() {
     const rec = new MediaRecorder(stream), chunks = [];
     const an = ac().createAnalyser(); an.fftSize = 1024; ac().createMediaStreamSource(stream).connect(an);
     rec.ondataavailable = e => e.data.size && chunks.push(e.data);
-    recState = { rec, stream, chunks, analyser: an, t0: performance.now() };
+    recState = { rec, stream, chunks, analyser: an, t0: performance.now(), script: Prompter.isOpen() };
+    Prompter.onRec(true);
     rec.start();
     $('[data-a=record].tb').classList.add('recording');
-    const upd = () => { if (!recState) return; status(`🔴 جارٍ التسجيل… ${((performance.now() - recState.t0) / 1000).toFixed(1)} ث — اضغطي ⏹ للتوقف`); recState.iv = requestAnimationFrame(upd); };
+    const upd = () => { if (!recState) return; Prompter.tick((performance.now() - recState.t0) / 1000); status(`🔴 جارٍ التسجيل… ${((performance.now() - recState.t0) / 1000).toFixed(1)} ث — اضغطي ⏹ للتوقف`); recState.iv = requestAnimationFrame(upd); };
     upd();
   } catch (e) { toast('تعذّر الوصول إلى الميكروفون 🎤 اسمحي للمتصفح باستخدامه'); }
 }
 async function stopRec() {
   if (!recState) return; const r = recState; recState = null; cancelAnimationFrame(r.iv);
-  $('[data-a=record].tb').classList.remove('recording');
+  $('[data-a=record].tb').classList.remove('recording'); Prompter.onRec(false);
   const stopped = new Promise(res => (r.rec.onstop = res)); r.rec.stop(); await stopped; r.stream.getTracks().forEach(t => t.stop());
   try {
     const data = await decodeToMono(await new Blob(r.chunks, { type: r.rec.mimeType }).arrayBuffer());
     let pk = 0; for (let i = 0; i < data.length; i++) pk = Math.max(pk, Math.abs(data[i])); if (pk > .01 && pk < .5) for (let i = 0; i < data.length; i++) data[i] *= .8 / pk;
-    pushUndo('تسجيل'); addTrack('تسجيلي 🎙️ ' + (tracks.filter(t => t.name.startsWith('تسجيلي')).length + 1), data, { fit: tracks.length === 0 });
-    mark('record'); status('✅ تم التسجيل وإضافته كمسار جديد');
+    pushUndo('تسجيل'); addTrack(r.script ? RECORD_SCRIPT.trackName : 'تسجيلي 🎙️ ' + (tracks.filter(t => t.name.startsWith('تسجيلي')).length + 1), data, { fit: tracks.length === 0 });
+    mark('record'); checkVmsg();
+    if (r.script) { Prompter.close(); toast('🇸🇦 أحسنتِ! تم تسجيل رسالتكِ لوطنكِ — شغّليها واستمعي لصوتكِ 💚', 4000); status('✅ تم تسجيل «رسالتي لوطني» — جرّبي إضافة النشيد كخلفية من File › Open National Anthem'); }
+    else status('✅ تم التسجيل وإضافته كمسار جديد');
   } catch (e) { toast('تعذّر حفظ التسجيل'); }
 }
 
@@ -920,7 +971,7 @@ async function openAnthem() {
     const wasEmpty = !tracks.length; pushUndo('فتح النشيد');
     addTrack((window.ANTHEM_NAME || 'النشيد الوطني') + ' 🇸🇦', data, { fit: wasEmpty });
     if (wasEmpty) { mark('open'); projectName = 'النشيد الوطني'; } else mark('merge');
-    status('🇸🇦 تم فتح النشيد الوطني — اضغطي ▶ أو Space للتشغيل');
+    checkVmsg(); status('🇸🇦 تم فتح النشيد الوطني — اضغطي ▶ أو Space للتشغيل');
   } catch (e) { toast('تعذّر فتح النشيد في هذا المتصفح — جرّبي Google Chrome'); }
   render();
 }
@@ -970,7 +1021,8 @@ const ACTIONS = {
       <kbd>Ctrl + C / X / V</kbd><span>نسخ / قص / لصق</span><kbd>Ctrl + A</kbd><span>تحديد الكل</span>
       <kbd>Home / End</kbd><span>البداية / النهاية</span><kbd>Ctrl + 1 / 3</kbd><span>تكبير / تصغير</span>
       <kbd>Ctrl + F</kbd><span>ملاءمة العرض</span><kbd>Shift + سحب</kbd><span>توسيع التحديد</span></div>`, [{ label: 'حسناً' }]),
-  blank: () => status('📄 مشروع فارغ — افتحي ملفاً أو سجّلي صوتكِ')
+  blank: () => status('📄 مشروع فارغ — افتحي ملفاً أو سجّلي صوتكِ'),
+  script: () => Prompter.toggle()
 };
 function run(a) { closeMenus(); ac(); const f = ACTIONS[a]; if (f) f(); }
 document.addEventListener('click', e => {
@@ -1009,6 +1061,54 @@ function confetti() {
   const cols = ['#8b5cf6', '#f59e0b', '#0fa797', '#e0364f', '#0ea5e9', '#fde047'];
   let ps = Array.from({ length: 160 }, (_, i) => ({ x: innerWidth / 2 + (Math.random() - .5) * 300, y: innerHeight / 2, vx: (Math.random() - .5) * 22, vy: -Math.random() * 20 - 6, r: Math.random() * 6, c: cols[i % 6], l: 0 }));
   (function f() { g.clearRect(0, 0, cv.width, cv.height); ps.forEach(p => { p.vy += .55; p.x += p.vx; p.y += p.vy; p.r += .15; p.l++; g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.globalAlpha = Math.max(0, 1 - p.l / 130); g.fillStyle = p.c; g.fillRect(-5, -7, 10, 14); g.restore(); }); ps = ps.filter(p => p.l < 130); if (ps.length) requestAnimationFrame(f); else g.clearRect(0, 0, cv.width, cv.height); })();
+}
+
+/* #####################################################################
+   📜 بطاقة نص التسجيل (رسالة لوطني) — تظهر للطالبة لتقرأها أثناء التسجيل
+   ##################################################################### */
+const Prompter = (() => {
+  const box = $("#prompter"); let size = 1.45;
+  function build() {
+    const S = RECORD_SCRIPT;
+    box.innerHTML = `
+      <div class="pr-head"><h3>${S.title}</h3>
+        <button data-p="smaller" title="تصغير الخط">أ−</button><button data-p="bigger" title="تكبير الخط">أ+</button><button data-p="close" title="إغلاق">×</button></div>
+      <div class="pr-article"><small>${S.article.label}</small><q>${S.article.text}</q></div>
+      <div class="pr-body">${S.lines.map(l => `<p>${l}</p>`).join('')}</div>
+      <div class="pr-dua"><b>${S.dua.label}</b>${S.dua.text}</div>
+      <div class="pr-foot"><button class="btn rec" data-p="rec">⏺ ابدئي التسجيل</button><span class="pr-state"></span>
+        <span class="pr-note">💡 اقتربي من الميكروفون، واقرئي ببطء ووضوح. اضغطي «إنهاء التسجيل» عند الانتهاء، وسيظهر صوتكِ كمسار جديد.</span></div>`;
+  }
+  box.addEventListener('click', e => {
+    const b = e.target.closest('[data-p]'); if (!b) return; const k = b.dataset.p;
+    if (k === 'close') { if (recState) stopRec(); close(); }
+    if (k === 'bigger' || k === 'smaller') { size = clamp(size + (k === 'bigger' ? .2 : -.2), 1, 3); box.style.setProperty('--pf', size + 'rem'); }
+    if (k === 'rec') { ac(); recState ? stopRec() : startRec(); }
+  });
+  const open = () => { build(); box.classList.remove('hidden'); closeMenus(); status('📜 اقرئي النص واضغطي «ابدئي التسجيل»'); };
+  function close() { box.classList.add('hidden'); box.classList.remove('rec'); }
+  return {
+    open, close, isOpen: () => !box.classList.contains('hidden'),
+    toggle: () => (box.classList.contains('hidden') ? open() : close()),
+    onRec(on) {
+      if (!this.isOpen()) return;
+      box.classList.toggle('rec', on);
+      const btn = $('[data-p=rec]', box); btn.textContent = on ? '⏹ إنهاء التسجيل' : '⏺ ابدئي التسجيل'; btn.classList.toggle('green', on); btn.classList.toggle('rec', !on);
+      if (!on) { $('.pr-state', box).textContent = ''; $$('.pr-body p', box).forEach(p => p.classList.remove('hl')); }
+    },
+    /* تمييز السطر الحالي تقريبياً (كل سطر نحو 4 ثوانٍ) لمساعدة الطالبة على المتابعة */
+    tick(sec) {
+      if (!this.isOpen()) return;
+      $('.pr-state', box).textContent = `🔴 جارٍ التسجيل ${sec.toFixed(0)} ث`;
+      const ps = $$('.pr-body p', box), i = Math.min(ps.length - 1, Math.floor(sec / 4));
+      ps.forEach((p, k) => p.classList.toggle('hl', k === i));
+    }
+  };
+})();
+/* مهمة إضافية: تسجيل الرسالة + النشيد كخلفية بصوت منخفض */
+function checkVmsg() {
+  const voice = tracks.some(t => t.name === RECORD_SCRIPT.trackName), anthem = tracks.find(t => t.name.includes(window.ANTHEM_NAME || 'النشيد'));
+  if (voice && anthem && anthem.gain < 0) mark('vmsg');
 }
 
 /* ----- التشغيل الأول ----- */
